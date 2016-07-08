@@ -1,3 +1,22 @@
-#navlist h1 {font-size:40px;}
-#navlist ul {align-text:right;}
-#navlist ul li {display:inline;}
+#game p {font-size:40px;}
+h1 {font-size:50px; padding:15px}
+#game ul {padding:10px;}
+#game li {display:inline;
+  text-transform: uppercase;
+  font-size: 30px;}
+#game li a:link,a:visited {text-decoration:none;}
+#game li a:hover,a:active {color:red;}
+#wl {font-size:25px;}
+#ng {font-size:20px;}
+#ng a:link,a:visited {
+  text-decoration:none;
+  background-color:white;
+  border-style:solid;
+  border-color:black;
+  border-radius: 10px;
+  padding:5px 10px;
+  text-align: center;
+  display: inline-block;}
+#ng a:hover, a:active {
+  color:red;
+}

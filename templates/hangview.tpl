@@ -1,17 +1,15 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="mod/hangman/hangman.css">
 </head>
-<div id="navlist">
-	<h1>Hangman!</h1>
+<h1>Hangman!</h1>
+<div id="game">
 
-  <hr>
   <!-- BEGIN pic -->
   {PICTURE}
   <!-- END pic -->
-  <hr>
 
   <!-- BEGIN panel -->
-  {LETTER_PANEL}
+  <p>{LETTER_PANEL}<p>
   <!-- END panel -->
 
   <ul>
@@ -19,15 +17,16 @@
     <li>{LETTER_BANK}</li>
 	<!-- END bank -->
 	</ul>
+
 </div>
 
-<div id="info">
+<div id="wl">
   <!-- BEGIN wlgame -->
   {WIN_LOSE}
   <!-- END wlgame -->
+</div>
 
-  <br>
-
+<div id="ng">
   <!-- BEGIN ngame -->
   {NEW_GAME}
   <!-- END ngame -->

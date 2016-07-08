@@ -21,7 +21,10 @@ class HangView
     {
       //$tpl refers to lowercase comment tag names in hangview.tpl
       $tpl['pic'] = $this->getImage();
-      $tpl['ngame'] = $this->getNewGame();
+      if($this->hangman->isGuessL())
+      {
+        $tpl['ngame'] = $this->getNewGame();
+      }
       if($this->hangman->isGameOver())
       {
         $tpl['wlgame'] = $this->getWinLose();
@@ -56,7 +59,7 @@ class HangView
       {
         if($reveal)
         {
-          $panel = $panel . ' ' . $letter[0] . ' ';
+          $panel = $panel . ' <u>' . $letter[0] . '</u> ';
         }
         else
         {
