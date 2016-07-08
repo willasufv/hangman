@@ -21,7 +21,7 @@ class Hangman
       $_GET['action'] = 'new_game';
     }
 
-    if($_GET['action'] == 'new_game')
+    if($this->isNewGame())
     {
       $this->resetGame();
       $this->fetchWord();
@@ -33,16 +33,15 @@ class Hangman
     {
       $this->loadSession();
       if(!$this->isGameOver() &&
-        $_GET['action'] == 'guessL')
+        $this->isGuessL())
       {
           $letter = $_GET['letter'];
-          var_dump($letter);
-          $this->checkLetter($letter);
+          $this->checkLetter($letter . $_SESSION['letter']);
       }
     }
     $this->saveSession();
 
-    //MAIN DEBUG
+    //DEBUG. Uncommet below for useful game state info.
     //var_dump($_GET['action']);
     //var_dump($this->word);
     //var_dump($this->hangCount);
@@ -61,7 +60,16 @@ class Hangman
     $letters = str_split($randWord);
     for($x = 0; $x < count($letters); $x++)
     {
-      $this->word[$letters[$x]] = false;
+      if(isset($this->word[$letters[$x]]))
+      {
+        $_SESSION[$letters[$x]]++;
+        $this->word[$letters[$x] . $_SESSION[$letters[$x]]] = false;
+      }
+      else
+      {
+        $_SESSION[$letters[$x]] = 0;
+        $this->word[$letters[$x]] = false;
+      }
     }
   }
 
@@ -105,18 +113,22 @@ class Hangman
   }
 
   /*
-  Removes a letter from the letterbank.
+  Removes a letter from the letterbank. Finds its index
+  in the letterbank, then unsets it.
   */
   public function bankRemoveLetter($letter)
   {
     $index = array_search($letter, $this->bank);
     unset($this->bank[$index]);
-    var_dump($index);
     return !($index === FALSE);
   }
 
   /*
-  Checks to see if a letter is in the word to guess.
+  Checks to see if a letter is in the word to guess. If the
+  letter is in the word, it is revealed and removed from letter
+  bank. Otherwise, hang count is incremented. Boolean is used
+  to make sure it hasn't already been removed, but this
+  shouldn't be possible in the view.
   */
   public function checkLetter($letter)
   {
@@ -140,11 +152,17 @@ class Hangman
   */
   public function revealLetter($letter)
   {
+    for($x = $_SESSION[$letter]; $x > 0; $x--)
+    {
+      $index = array_search($letter . $x, $this->bank);
+      $this->word[$letter . $x] = true;
+    }
     $this->word[$letter] = true;
   }
 
   /*
-  Sets all of $word to true, revealing the whole word.
+  Sets all of $word to true, revealing the whole word. Used
+  when the player users to show the answer.
   */
   public function revealWord()
   {
@@ -152,11 +170,11 @@ class Hangman
     {
       $this->word[$letter] = true;
     }
-    var_dump($this->word);
   }
 
   /*
-  Determines if the game is over.
+  Determines if the game is over. Tests if either hangcount is
+  equal to 6 or if every value in $word is TRUE.
   */
   public function isGameOver()
   {
@@ -168,7 +186,6 @@ class Hangman
         $count++;
       }
     }
-    var_dump($count);
 
     return $this->hangCount == 6 ||
       $count == count($this->word);
@@ -180,6 +197,22 @@ class Hangman
   public function isWinner()
   {
     return ! ($this->hangCount == 6);
+  }
+
+  /*
+  Returns true if action is set to new_game.
+  */
+  public function isNewGame()
+  {
+    return $_GET['action'] == 'new_game';
+  }
+
+  /*
+  Returns true if action is set to guessL.
+  */
+  public function isGuessL()
+  {
+    return $_GET['action'] == 'guessL';
   }
 
   /*
