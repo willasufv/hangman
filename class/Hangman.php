@@ -36,15 +36,15 @@ class Hangman
         $_GET['action'] == 'guessL')
       {
           $letter = $_GET['letter'];
-          var_dump($letter);
-          $this->checkLetter($letter);
+          #NEW
+          $this->checkLetter($letter . $_SESSION['letter']);
       }
     }
     $this->saveSession();
 
     //MAIN DEBUG
     //var_dump($_GET['action']);
-    //var_dump($this->word);
+    var_dump($this->word);
     //var_dump($this->hangCount);
     //var_dump($this->bank);
   }
@@ -58,10 +58,23 @@ class Hangman
     $myfile = file_get_contents(PHPWS_SOURCE_DIR . 'mod/hangman/hangwords.txt');
     $words = preg_split('/[\s]+/',$myfile);
     $randWord = strtolower($words[rand(0,count($words))]);
+    #test
+    //$randWord = 'fooodf';
     $letters = str_split($randWord);
     for($x = 0; $x < count($letters); $x++)
     {
-      $this->word[$letters[$x]] = false;
+      if(isset($this->word[$letters[$x]]))
+      {
+        $_SESSION[$letters[$x]]++;
+        var_dump($letters[$x]);
+        $this->word[$letters[$x] . $_SESSION[$letters[$x]]] = false;
+        echo "TEST";
+      }
+      else
+      {
+        $_SESSION[$letters[$x]] = 0;
+        $this->word[$letters[$x]] = false;
+      }
     }
   }
 
@@ -111,7 +124,6 @@ class Hangman
   {
     $index = array_search($letter, $this->bank);
     unset($this->bank[$index]);
-    var_dump($index);
     return !($index === FALSE);
   }
 
@@ -140,6 +152,11 @@ class Hangman
   */
   public function revealLetter($letter)
   {
+    for($x = $_SESSION[$letter]; $x > 0; $x--)
+    {
+      $index = array_search($letter . $x, $this->bank);
+      $this->word[$letter . $x] = true;
+    }
     $this->word[$letter] = true;
   }
 
@@ -152,7 +169,6 @@ class Hangman
     {
       $this->word[$letter] = true;
     }
-    var_dump($this->word);
   }
 
   /*
@@ -168,7 +184,6 @@ class Hangman
         $count++;
       }
     }
-    var_dump($count);
 
     return $this->hangCount == 6 ||
       $count == count($this->word);

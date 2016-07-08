@@ -56,7 +56,7 @@ class HangView
       {
         if($reveal)
         {
-          $panel = $panel . ' ' . $letter . ' ';
+          $panel = $panel . ' ' . $letter[0] . ' ';
         }
         else
         {
